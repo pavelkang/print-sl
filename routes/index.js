@@ -10,7 +10,10 @@ router.post('/api/upload', function(req, res) {
   console.log("Received a POST");
   console.log(req.body);
   console.log(req.files);
-  res.json({'yes' : 'no'});
+  /*
+    if error is empty string, notify the user success. Otherwise, notify failure
+  */
+  res.json({'error' : ''});
 })
 
 module.exports = router;

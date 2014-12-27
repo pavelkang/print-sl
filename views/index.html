@@ -28,26 +28,29 @@
             <paper-button id="dboxButton" raised>Open Dropbox</paper-button>
           </div>
           <div id="local">
-            <form is="ajax-form" action="api/upload" method="post" enctype="multipart/form-data">
+            <paper-button id="localButton" raised>
 
               <file-input name="file" minSize="100" maxSize="3000000" maxFiles="1" extensions='["jpeg", "jpg", "pdf", "docx", "txt"]'>
                 Upload a local file
               </file-input>
+            </paper-button>
           </div>
         </div>
       </div>
       <!-- andrew id -->
       <paper-input id="andrew" name="andrew" label="Your Andrew ID"></paper-input>
-
       <!-- submit printing task -->
       <center vertical layout>
         <paper-fab icon="print" id="printer" type="submit"></paper-fab>
-      </form>
         <paper-spinner active></paper-spinner>
       </center>
       <!-- notifications -->
       <paper-toast id="toast" text="File selected!"></paper-toast>
+      <paper-toast id="toast1" text="File not valid!"></paper-toast>
       <paper-toast id="toast2" text="Printing task received by the server."></paper-toast>
+      <paper-toast id="toast3" text="Error Occurred!"></paper-toast>
+      <paper-toast id="toast4" text="Please enter Andrew ID!"></paper-toast>
+      <paper-toast id="toast5" text="No file selected!"></paper-toast>
     </div>
   </core-header-panel>
   <!-- js -->

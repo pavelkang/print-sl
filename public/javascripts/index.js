@@ -4,6 +4,7 @@ var oauthToken;
 var APILOADED = false;
 var FILE;
 var LOCAL = false;
+var FILENAME = "xx";
 
 /* API has loaded */
 function setApi() {
@@ -69,11 +70,12 @@ function downloadFile(file, callback, token) {
 
 function printCall(data) {
   console.log("print call");
+  hideSpin();
   if (data) {
     FILE = data;
-    hideSpin();
   } else {
-    console.log("Nothing");
+
+    console.log("Error occurred");
   }
 }
 
@@ -113,11 +115,12 @@ window.onload = function() {
   dboxButton.addEventListener("click", function() {
     Dropbox.choose({
       success: function(files) {
+        console.log(files[0])
         LOCAL = false;
         showSpin();
         notifyFileSelected();
-        fetchFile(files[0].link);
-        updateCard(files[0].name);
+        //fetchFile(files[0].link);
+        //updateCard(files[0].name);
       },
       cancel: function() {},
       linkType: "direct", // or "direct"
@@ -126,79 +129,56 @@ window.onload = function() {
   });
   /* submit button AJAX */
   var submitButton = document.getElementById("printer");
-  var form = document.querySelector("form");
   submitButton.onclick = function(event) {
-    form.submit();
-  }
-  form.onsubmit = function(event) {
     event.preventDefault();
-    console.log(event);
     /* check ID */
     var andrewId = document.getElementById("andrew").value;
     if (!andrewId) {
-      alert("Please enter your Andrew ID!");
+      notifyNoId();
       return ;
     }
+    /* Local file */
     if (LOCAL) {
       showSpin();
       if (validFiles.length==0) {
-        alert("File not valid!");
+        notifyFileInvalid();
         return ;
       }
-      var formData = new FormData();
-      formData.append("file", validFiles[0], validFiles[0].name);
-      formData.append("andrew", andrewId);
-      console.log(formData)
-      formData.append("username", "Groucho");
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", "/api/upload", true);
-      xhr.onload = function () {
-        hideSpin();
-        if (xhr.status === 200) {
-          console.log(xhr.responseText);
-        } else {
-          alert('An error occurred!');
-        }
-      };
-      xhr.send(formData);
+      console.log(validFiles[0]);
+      postForm(validFiles[0], validFiles[0].name, andrewId);
+      return ;
     }
+    /* google drive or dropbox */
+    if (!FILE) {
+      notifyNoFile();
+      return ;
+    }
+    console.log(FILE);
+    postForm(FILE, FILENAME, andrewId);
   }
-  /*
-  submitButton.addEventListener("click", function() {
-    var andrewId = document.getElementById("andrew").value;
-    if (!andrewId) {
-      alert("Please enter your Andrew ID!");
-      return ;
-    }
-    if (!FILE && !LOCAL) {
-      alert("Please select a file or wait for it to be uploaded!");
-      return ;
-    }
-    console.log("Posting to server with id " + andrewId);
-    if (LOCAL) {
-      var form = document.querySelector("form");
-      form.submit();
-    } else {
-      console.log("cloud!");
-
-    }
-  })*/
 };
 
-/* Toast a message confirming selection */
-function notifyFileSelected() {
-  var toast = document.getElementById("toast");
-  toast.show();
+function postForm(fileToPost, nameOfFile, andrewId) {
+  var formData = new FormData();
+  formData.append("file", fileToPost, nameOfFile);
+  formData.append("andrew", andrewId);
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload", true);
+  xhr.onload = function () {
+    hideSpin();
+    if (xhr.status === 200) {
+      console.log(xhr.responseText);
+    } else {
+      notifyError();
+    }
+  };
+  xhr.send(formData);
 }
 
 /* Update the card content to be the file information */
 function updateCard(fileName) {
   var card = document.querySelector("#card div");
   var len = fileName.length;
-  /*
-  if (len > 15) {
-    fileName = "..." + fileName.slice(len-15, len);
-  }*/
   var fileNameLine = "File: " + fileName;
   card.innerHTML = fileNameLine;
 }
@@ -223,4 +203,35 @@ function showSpin() {
 function hideSpin() {
   var spinner = document.querySelector("paper-spinner");
   spinner.style.display = "";
+}
+
+/* Toast a message confirming selection */
+function notifyFileSelected() {
+  var toast = document.getElementById("toast");
+  toast.show();
+}
+
+function notifyFileInvalid() {
+  var toast = document.getElementById("toast1");
+  toast.show();
+}
+
+function notifySuccess() {
+  var toast = document.getElementById("toast2");
+  toast.show();
+}
+
+function notifyError() {
+  var toast = document.getElementById("toast3");
+  toast.show();
+}
+
+function notifyNoId() {
+  var toast = document.getElementById("toast4");
+  toast.show();
+}
+
+function notifyNoFile() {
+  var toast = document.getElementById("toast5");
+  toast.show();
 }
