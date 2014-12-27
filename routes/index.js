@@ -13,7 +13,7 @@ router.post('/api/upload', function(req, res) {
   /*
     if error is empty string, notify the user success. Otherwise, notify failure
   */
-  res.json({'error' : ''});
+  res.send("");
 })
 
 module.exports = router;
