@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>&lt;dropbox-button&gt;</title>
+
+  <!-- Importing Web Component's Polyfill -->
+  <script src="bower_components/platform/platform.js"></script>
+  <!-- Importing Custom Elements -->
+  <link rel="import" href="src/dropbox-button.html">
+</head>
+<body>
+
+  <!-- Using Custom Elements -->
+  <dropbox-button buttonType="chooser" appKey="g5rc1yl1way6vxr"></dropbox-button>
+  <dropbox-button buttonType="saver" appKey="g5rc1yl1way6vxr" href="http://kashiro.github.io/dropbox-button/img/test.png" fileName="testtest.png"></dropbox-button>
+
+  <script>
+  window.addEventListener('WebComponentsReady', function(e){
+    var chooser = document.querySelector('dropbox-button[buttonType=chooser]'),
+        saver = document.querySelector('dropbox-button[buttonType=saver]');
+
+    // chooser
+    chooser.success = function(){
+      console.log('success');
+    };
+    chooser.cancel = function(){
+      console.log('cancel');
+    };
+
+    // saver
+    saver.success = function(){
+      console.log('success');
+    };
+    saver.progress = function(){
+      console.log('progress');
+    };
+    saver.cancel = function(){
+      console.log('cancel');
+    };
+    saver.error = function(){
+      console.log('error');
+    };
+
+  });
+  </script>
+</body>
+</html>

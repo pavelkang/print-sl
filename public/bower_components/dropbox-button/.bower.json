@@ -1,0 +1,36 @@
+{
+  "name": "dropbox-button",
+  "version": "0.0.2",
+  "homepage": "https://github.com/kashiro/dropbox-button",
+  "authors": [
+    "kashiro"
+  ],
+  "description": "Web Component wrapper for dropbox Button using Polymer",
+  "main": "src/dropbox-button.html",
+  "keywords": [
+    "polymer",
+    "dropbox",
+    "web-components"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "~0.4.2"
+  },
+  "_release": "0.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.2",
+    "commit": "51a838ec1ab420303a267b74a009182c69a0e308"
+  },
+  "_source": "git://github.com/kashiro/dropbox-button.git",
+  "_target": "~0.0.2",
+  "_originalSource": "dropbox-button",
+  "_direct": true
+}

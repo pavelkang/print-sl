@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>print@Scottylabs</title>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <!-- Polymer-related imports -->
+  <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="elements.html">
+  <!-- css and js -->
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body fullbleed layout vertical>
+  <core-header-panel mode="standard">
+    <div class="core-header" horizontal center layout>Print @ ScottyLabs (LOGO)</div>
+    <!-- file chooser -->
+    <div class="content" fit layout vertical>
+      <div layout horizontal id="part1">
+        <paper-shadow flex="1" z="1" id="card" horizontal center layout>
+          <div id="cardContent">Choose file from ...</div>
+        </paper-shadow>
+        <div id="buttons" vertical layout flex="1">
+          <div id="gd">
+            <paper-button id="gdriveButton" raised>Open Drive</paper-button>
+          </div>
+          <div id="db">
+            <paper-button id="dboxButton" raised>Open Dropbox</paper-button>
+          </div>
+          <div id="local">
+            <form is="ajax-form" action="api/upload" method="post" enctype="multipart/form-data">
+
+              <file-input name="file" minSize="100" maxSize="3000000" maxFiles="1" extensions='["jpeg", "jpg", "pdf", "docx", "txt"]'>
+                Upload a local file
+              </file-input>
+          </div>
+        </div>
+      </div>
+      <!-- andrew id -->
+      <paper-input id="andrew" name="andrew" label="Your Andrew ID"></paper-input>
+
+      <!-- submit printing task -->
+      <center vertical layout>
+        <paper-fab icon="print" id="printer" type="submit"></paper-fab>
+      </form>
+        <paper-spinner active></paper-spinner>
+      </center>
+      <!-- notifications -->
+      <paper-toast id="toast" text="File selected!"></paper-toast>
+      <paper-toast id="toast2" text="Printing task received by the server."></paper-toast>
+    </div>
+  </core-header-panel>
+  <!-- js -->
+  <script src="index.js"></script>
+  <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=setApi"></script>
+  <script src="https://apis.google.com/js/client.js"></script>
+  <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="qjvxkewso54u521"></script>
+</body>
+
+</html>

@@ -1,0 +1,138 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<polymer-element name="dropbox-button" on-click="onClick" attributes="appKey fileName href buttonType linkType multiselect extensions">
+
+  <template>
+      <button class="dropbox-dropin-btn dropbox-dropin-default" id="dropboxBtn">
+        <span class="dropin-btn-status"></span>
+        <template if="{{ buttonType === 'chooser' }}">
+          Choose from Dropbox
+        </template>
+
+        <template if="{{ buttonType === 'saver' }}">
+          Save to Dropbox
+        </template>
+      </button>
+
+    <style>
+      .dropbox-dropin-default:hover,
+      .dropbox-dropin-error:hover{
+        border-color: #dedede;
+        border-bottom-color: #cacaca;
+        background: #fdfdfd;
+        background: -moz-linear-gradient(top, #fdfdfd 0%, #f5f5f5 100%);
+        background: -webkit-linear-gradient(top, #fdfdfd 0%, #f5f5f5 100%);
+        background: linear-gradient(to bottom, #fdfdfd 0%, #f5f5f5 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#f5f5f5',GradientType=0);
+      }
+      .dropbox-dropin-btn,
+      .dropbox-dropin-btn:link,
+      .dropbox-dropin-btn:hover{
+        cursor: pointer;
+        display: inline-block;
+        height: 14px;
+        font-family: "Lucida Grande", "Segoe UI", "Tahoma", "Helvetica Neue", "Helvetica", sans-serif;
+        font-size: 11px;
+        color: #636363;
+        font-weight: 600;
+        padding: 1px 7px 5px 3px;
+        border: 1px solid #ebebeb;
+        border-radius: 2px;
+        border-bottom-color: #d4d4d4;
+        background: #fcfcfc;
+        background: -moz-linear-gradient(top, #fcfcfc 0%, #f5f5f5 100%);
+        background: -webkit-linear-gradient(top, #fcfcfc 0%, #f5f5f5 100%);
+        background: linear-gradient(to bottom, #fcfcfc 0%, #f5f5f5 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#f5f5f5',GradientType=0);
+      }
+      .dropbox-chooser,
+      .dropbox-dropin-btn{
+        line-height: 11px !important;
+        text-decoration: none !important;
+        box-sizing: content-box !important;
+        -webkit-box-sizing: content-box !important;
+        -moz-box-sizing: content-box !important;
+      }
+      .dropbox-dropin-default .dropin-btn-status{
+        background-position: 0;
+      }
+      .dropbox-dropin-btn .dropin-btn-status{
+        display: inline-block;
+        width: 15px;
+        height: 14px;
+        vertical-align: bottom;
+        margin: 0 5px 0 2px;
+        background: transparent url('https://www.dropbox.com/static/images/widgets/dbx-saver-status.png') no-repeat;
+        position: relative;
+        top: 2px;
+      }
+    </style>
+
+  </template>
+
+  <script>
+    Polymer({
+      appKey: '',
+      linkType : 'preview',
+      multiselect : false,
+      extensions : '',
+      buttonType: 'chooser',
+      href: '',
+      fileName: '',
+      success: function(){},
+      cancel: function(){},
+      progress: function(){},
+      error: function(){},
+      ready: function(){
+        this.onCreated();
+      },
+      onCreated: function(){
+        this.isChooser = this.buttonType === 'chooser';
+        this.loadLib();
+      },
+      getOpt: function(){
+        var opt = '';
+        if(this.isChooser){
+          opt = {
+            linkType: this.linkType,
+            multiselect: this.multiselect,
+            extensions: this.extensions,
+            success: this.success,
+            cancel: this.cancel
+          };
+        }else{
+          opt = {
+            files: [{url: this.href, filename: this.fileName}],
+            success: this.success,
+            cancel: this.cancel,
+            progress: this.progress,
+            error: this.error
+          };
+        }
+        return opt;
+      },
+      loadLib: function(){
+        var d = document,
+            i = 'dropboxjs',
+            j = d.createElement("script"),
+            w;
+        if(!d.getElementById(i)){
+          j.id=i;
+          j.src="https://www.dropbox.com/static/api/2/dropins.js";
+          j.setAttribute('data-app-key', this.appKey);
+          w = d.getElementById(i);
+          d.body.appendChild(j);
+        }
+      },
+      onClick: function(){
+        var opt = this.getOpt();
+        if(this.isChooser){
+          Dropbox.choose(opt);
+        }else{
+          Dropbox.save(opt);
+        }
+        return false;
+      }
+    });
+  </script>
+
+</polymer-element>
