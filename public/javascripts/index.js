@@ -102,8 +102,15 @@ window.onload = function() {
     var validFiles = [];
     fileInputEl.addEventListener("change",
     function(event) {
+        showSpin();
         validFiles = event.detail.valid;
-        LOCAL = true;
+        if (validFiles.length == 0) {
+            notifyFileInvalid();
+        } else {
+            updateCard(validFiles[0].name);
+            LOCAL = true;
+            hideSpin();
+        }
     }
 );
 /* google drive & dropbox buttons */
