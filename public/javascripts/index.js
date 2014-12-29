@@ -1,10 +1,10 @@
 var CLIENT_ID = '27235072689-490srk3q63nvk5ui6a06hukhivsvvh1o.apps.googleusercontent.com';
 var APIKEY = 'AIzaSyCcJs5-Gf22pmMCfA5DBQCReJ61h8qQxhM'
-var oauthToken;
-var FILE;
-var LOCAL = false;
-var APILOADED = false;
-var FILENAME = "xx";
+var oauthToken; // Google authtoken of current user
+var FILE; // blob object from Google or Dropbox
+var LOCAL = false; // Is user uploading from local?
+var APILOADED = false; // Has Google API loaded?
+var FILENAME = ""; // Name of the file
 
 /* API has loaded */
 function setApi() {
@@ -41,7 +41,6 @@ function handleAuthResult(authResult) {
 
 function createPicker() {
     var picker = new google.picker.PickerBuilder()
-    .addView(new google.picker.DocsUploadView())
     .addView(new google.picker.DocsView())
     .setOAuthToken(oauthToken)
     .setDeveloperKey(APIKEY)
@@ -50,7 +49,7 @@ function createPicker() {
     picker.setVisible(true);
 }
 
-/* Download file from google drive */
+/* Download a blob object from google drive */
 function downloadFile(file, callback, token) {
     if (file.downloadUrl) {
         var xhr = new XMLHttpRequest();
@@ -69,6 +68,7 @@ function downloadFile(file, callback, token) {
     }
 }
 
+/* Handle the blob object from Google Drive */
 function googleCallback(data) {
     hideSpin();
     if (data) {
@@ -81,7 +81,12 @@ function googleCallback(data) {
     }
 }
 
-/* TODO Google drive API supports three documentes. This handles one of them. */
+/*
+  Gets the file from metadata.
+  TODO Google drive API supports three documentes. This handles one of them.
+  If we want to support printing Google Docs as PDFs, this function needs to
+  be improved.
+  */
 function pickerCallback(data) {
     if (data.action == google.picker.Action.PICKED) {
         showSpin();
@@ -112,66 +117,66 @@ window.onload = function() {
             hideSpin();
         }
     }
-);
-/* google drive & dropbox buttons */
-var gdriveButton = document.getElementById("gdriveButton");
-gdriveButton.addEventListener("click", openGdrive);
-var dboxButton = document.getElementById("dboxButton");
-dboxButton.addEventListener("click", function() {
-    Dropbox.choose({
-        success: function(files) {
-            showSpin();
-            var oReq = new XMLHttpRequest();
-            var theFile = files[0];
-            oReq.onload = function() {
-                hideSpin();
-                FILENAME = theFile.name;
-                FILE = oReq.response;
-                updateCard(theFile.name);
-                LOCAL = false;
-                notifyFileSelected();
-            }
-            oReq.onerror = function() {
-                hideSpin();
-                notifyError();
-            }
-            oReq.open("GET", theFile.link, true);
-            oReq.responseType = "blob";
-            oReq.send();
-        },
-        cancel: function() {},
-        linkType: "direct", // or "direct"
-        extensions: ['.pdf', '.doc', '.docx'],
+                                );
+    /* google drive button */
+    var gdriveButton = document.getElementById("gdriveButton");
+    gdriveButton.addEventListener("click", openGdrive);
+    /* dropbox configuration */
+    var dboxButton = document.getElementById("dboxButton");
+    dboxButton.addEventListener("click", function() {
+        Dropbox.choose({
+            success: function(files) {
+                showSpin();
+                var oReq = new XMLHttpRequest();
+                var theFile = files[0];
+                oReq.onload = function() {
+                    hideSpin();
+                    FILENAME = theFile.name;
+                    FILE = oReq.response;
+                    updateCard(theFile.name);
+                    LOCAL = false;
+                    notifyFileSelected();
+                }
+                oReq.onerror = function() {
+                    hideSpin();
+                    notifyError();
+                }
+                oReq.open("GET", theFile.link, true);
+                oReq.responseType = "blob";
+                oReq.send();
+            },
+            cancel: function() {},
+            linkType: "direct",
+            extensions: ['.pdf', '.doc', '.docx'], // TODO support more?
+        });
     });
-});
-/* submit button AJAX */
-var submitButton = document.getElementById("printer");
-submitButton.onclick = function(event) {
-    event.preventDefault();
-    /* check ID */
-    var andrewId = document.getElementById("andrew").value;
-    if (!andrewId) {
-        notifyNoId();
-        return;
-    }
-    /* Local file */
-    if (LOCAL) {
-        showSpin();
-        if (validFiles.length == 0) {
-            notifyFileInvalid();
+    /* submit button AJAX */
+    var submitButton = document.getElementById("printer");
+    submitButton.onclick = function(event) {
+        event.preventDefault();
+        /* check ID */
+        var andrewId = document.getElementById("andrew").value;
+        if (!andrewId) {
+            notifyNoId();
             return;
         }
-        console.log(validFiles[0]);
-        postForm(validFiles[0], validFiles[0].name, andrewId);
-        return;
+        /* Local file */
+        if (LOCAL) {
+            showSpin();
+            if (validFiles.length == 0) {
+                notifyFileInvalid();
+                return;
+            }
+            postForm(validFiles[0], validFiles[0].name, andrewId);
+            return;
+        }
+        /* google drive or dropbox */
+        if (!FILE) {
+            notifyNoFile();
+            return;
+        }
+        postForm(FILE, FILENAME, andrewId);
     }
-    /* google drive or dropbox */
-    if (!FILE) {
-        notifyNoFile();
-        return;
-    }
-    postForm(FILE, FILENAME, andrewId);
-}
 };
 
 function postForm(fileToPost, nameOfFile, andrewId) {
@@ -209,6 +214,7 @@ function showSpin() {
     spinner.style.display = "block";
 }
 
+/* hide spinner*/
 function hideSpin() {
     var spinner = document.querySelector("paper-spinner");
     spinner.style.display = "";

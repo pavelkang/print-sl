@@ -17,10 +17,6 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 
-/*
-  To upload to directory uploads/ uncomment the following line
-*/
-//app.use(multer({ dest: './uploads/'}))
 app.use(multer({dest : './uploads/'}));
 app.use(logger('dev'));
 app.use(bodyParser.json());
