@@ -2,7 +2,15 @@ Print @ ScottyLabs
 ==================
 #### How-to
 Run `npm install` to install dependencies, then run `node bin/www`
-
+Also, you should include these in *app.js*:
+```javascript
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public/bower_components')));
+app.use(express.static(path.join(__dirname, 'public/javascripts')));
+app.use(express.static(path.join(__dirname, 'public/stylesheets')));
+app.use(express.static(path.join(__dirname, 'views')));
+```
+to make sure the front-end libraries are included correctly.
 #### Introduction
 This is a web app based based on [Polymer](www.polymer-project.org). It allows CMU students to print files from Google Drive, Dropbox, or local files on their computers or mobile devices.
 
