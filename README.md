@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, 'views')));
 ```
 to make sure the front-end libraries are included correctly.
 #### Introduction
-This is a web app based based on [Polymer](https://www.polymer-project.org). It allows CMU students to print files from Google Drive, Dropbox, or local files on their computers or mobile devices.
+This is a web app based on [Polymer](https://www.polymer-project.org). It allows CMU students to print files from Google Drive, Dropbox, or local files on their computers or mobile devices.
 
 #### Interface
 ```javascript
